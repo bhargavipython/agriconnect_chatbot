@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="{{ selected_lang }}">
+<head>
+    <meta charset="UTF-8">
+    <title>✨ AgriConnect Chatbot</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #e9f6f0 0%, #f7ffe5 100%);
+            font-family: 'Montserrat', 'Segoe UI', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+        .chatbot-container {
+            max-width: 480px;
+            margin: 48px auto 24px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(44, 62, 80, 0.13);
+            overflow: hidden;
+            position: relative;
+        }
+        .chatbot-header {
+            background: linear-gradient(90deg, #4CAF50 60%, #81c784 100%);
+            padding: 22px 0 16px 0;
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        .chatbot-header img {
+            width: 38px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        .chatbot-body {
+            padding: 24px 24px 8px 24px;
+            min-height: 260px;
+            background: #f8fafb;
+        }
+        .bot-message, .user-message {
+            margin-bottom: 18px;
+            animation: fadeIn 0.5s;
+        }
+        .bot-message {
+            background: #eafaf1;
+            border-left: 5px solid #4CAF50;
+            padding: 12px 18px;
+            border-radius: 8px;
+            color: #2e7d32;
+        }
+        .user-message {
+            background: #e3f0ff;
+            border-right: 5px solid #1976d2;
+            padding: 12px 18px;
+            border-radius: 8px;
+            color: #1565c0;
+            text-align: right;
+        }
+        .bot-message label, .user-message label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .input-section {
+            padding: 20px 24px 24px 24px;
+            background: #fff;
+            border-top: 1px solid #e0e0e0;
+        }
+        .checkbox-group {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            background: #f1f8e9;
+            border-radius: 6px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 0.98rem;
+            transition: background 0.2s;
+        }
+        .checkbox-group input[type="checkbox"] {
+            accent-color: #4CAF50;
+            margin-right: 6px;
+        }
+        .file-input {
+            margin: 10px 0 0 0;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1.5px solid #b2dfdb;
+            font-size: 1rem;
+            resize: none;
+            margin-top: 10px;
+            background: #f8fafb;
+            transition: border 0.2s;
+        }
+        textarea:focus {
+            border: 1.5px solid #4CAF50;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(90deg, #4CAF50 70%, #43a047 100%);
+            color: white;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 12px;
+            box-shadow: 0 2px 8px rgba(76,175,80,0.08);
+            transition: background 0.2s, transform 0.1s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #43a047 70%, #388e3c 100%);
+            transform: translateY(-2px) scale(1.01);
+        }
+        #voiceBtn {
+            background: linear-gradient(90deg, #f57c00 70%, #ffb300 100%);
+            margin-top: 10px;
+            margin-bottom: 0;
+        }
+        #voiceBtn:hover {
+            background: linear-gradient(90deg, #ef6c00 70%, #ffa000 100%);
+        }
+        .lang-select {
+            text-align: center;
+            margin-top: 10px;
+            background: #f1f8e9;
+            padding: 10px 0 6px 0;
+        }
+        .lang-select select {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #b2dfdb;
+            font-size: 1rem;
+            margin-left: 8px;
+        }
+        audio {
+            margin-top: 10px;
+            width: 100%;
+        }
+        .footer {
+            text-align: center;
+            color: #888;
+            font-size: 0.96rem;
+            margin-bottom: 18px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        @media (max-width: 600px) {
+            .chatbot-container { max-width: 98vw; margin: 10px auto; }
+            .chatbot-body, .input-section { padding: 12px 6vw; }
+        }
+    </style>
+</head>
+<body>
+    <div class="chatbot-container">
+        <div class="chatbot-header">
+            <img src="https://img.icons8.com/color/48/000000/plant-under-sun.png" alt="AgriConnect Logo"/>
+            AgriConnect Chatbot
+        </div>
+        <form method="POST" class="lang-select">
+            {{ t['select_lang'] }}
+            <select name="lang" onchange="this.form.submit()">
+                <option value="en" {% if selected_lang == 'en' %}selected{% endif %}>English</option>
+                <option value="te" {% if selected_lang == 'te' %}selected{% endif %}>తెలుగు</option>
+                <option value="hi" {% if selected_lang == 'hi' %}selected{% endif %}>हिंदी</option>
+            </select>
+        </form>
+        <div class="chatbot-body">
+            <div class="bot-message">
+                <label>{{ t['greeting'] }}</label>
+                <small>{{ t['info'] }}</small>
+            </div>
+            {% if question %}
+            <div class="user-message">
+                <label>{{ t['question'] }}</label>
+                {{ question }}
+            </div>
+            {% endif %}
+            {% if answer %}
+            <div class="bot-message">
+                <label>{{ t['answer'] }}</label>
+                {{ answer }}
+                {% if audio_file %}
+                <audio controls autoplay>
+                    <source src="{{ url_for('serve_audio', filename=audio_file) }}" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="lang" value="{{ selected_lang }}">
+            <div class="input-section">
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="use_pdf" id="use_pdf" onchange="toggleUpload('pdf_upload', this)"> {{ t['pdf'] }}</label>
+                    <label><input type="checkbox" name="use_web" id="use_web"> {{ t['web'] }}</label>
+                    <label><input type="checkbox" name="use_excel" id="use_excel" onchange="toggleUpload('excel_upload', this)"> {{ t['excel'] }}</label>
+                </div>
+                <div class="file-input" id="pdf_upload" style="display:none">
+                    <input type="file" name="pdf_file" accept="application/pdf">
+                </div>
+                <div class="file-input" id="excel_upload" style="display:none">
+                    <input type="file" name="excel_file" accept=".xls,.xlsx">
+                </div>
+                <textarea name="question" rows="3" placeholder="{{ t['placeholder'] }}">{{ question }}</textarea>
+                <button type="button" id="voiceBtn" onclick="toggleVoiceInput()">🎤 Start Voice Input</button>
+                <button type="submit">{{ t['btn'] }}</button>
+            </div>
+        </form>
+    </div>
+    <div class="footer">
+        &copy; 2025 AgriConnect &mdash; Smart Farming Assistant
+    </div>
+    <script>
+        function toggleUpload(id, checkbox) {
+            const section = document.getElementById(id);
+            section.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
+        let recognition;
+        let isListening = false;
+
+        function toggleVoiceInput() {
+            const voiceBtn = document.getElementById('voiceBtn');
+            const textarea = document.querySelector('textarea');
+
+            if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+                alert("❌ Your browser does not support Speech Recognition. Please use Google Chrome.");
+                return;
+            }
+
+            if (!recognition) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.lang = '{{ selected_lang }}' === 'te' ? 'te-IN' :
+                                  '{{ selected_lang }}' === 'hi' ? 'hi-IN' : 'en-IN';
+                recognition.interimResults = false;
+                recognition.continuous = false;
+
+                recognition.onresult = function (event) {
+                    const transcript = event.results[0][0].transcript;
+                    textarea.value = transcript;
+                    isListening = false;
+                    voiceBtn.innerText = "🎤 Start Voice Input";
+                };
+
+                recognition.onerror = function (event) {
+                    alert("🎙️ Error: " + event.error);
+                    isListening = false;
+                    voiceBtn.innerText = "🎤 Start Voice Input";
+                };
+
+                recognition.onend = function () {
+                    if (isListening) {
+                        voiceBtn.innerText = "🎤 Start Voice Input";
+                        isListening = false;
+                    }
+                };
+            }
+
+            if (isListening) {
+                recognition.stop();
+                voiceBtn.innerText = "🎤 Start Voice Input";
+                isListening = false;
+            } else {
+                recognition.start();
+                voiceBtn.innerText = "🛑 Stop Voice Input";
+                isListening = true;
+            }
+        }
+    </script>
+</body>
+</html>
